@@ -5,7 +5,8 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TEMPLATE="${REPO_ROOT}/day-updates/_template.md"
 START_DATE="2026-07-07"
 
-TODAY_ISO="$(date +%Y-%m-%d)"
+# Allow TODAY override for testing: TODAY_ISO="${TODAY:-$(date +%Y-%m-%d)}"
+TODAY_ISO="${TODAY:-$(date +%Y-%m-%d)}"
 TARGET="${REPO_ROOT}/day-updates/${TODAY_ISO}.md"
 
 if [[ -f "$TARGET" ]]; then
@@ -16,8 +17,9 @@ fi
 # Compute day number (workdays since start).
 DAY_NUMBER=$(python3 -c "
 from datetime import date, timedelta
+import os
 start = date.fromisoformat('${START_DATE}')
-today = date.today()
+today = date.fromisoformat(os.environ.get('TODAY', date.today().isoformat()))
 days = 0
 d = start
 while d <= today:
