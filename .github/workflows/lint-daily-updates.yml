@@ -1,0 +1,22 @@
+name: Lint daily updates
+
+on:
+  pull_request:
+    paths:
+      - 'day-updates/**'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check required sections
+        run: |
+          for f in day-updates/2*.md; do
+            for section in "## Planned" "## Did" "## Learned" "## Hours" "## Tomorrow"; do
+              grep -q "^$section" "$f" || {
+                echo "::error file=$f::Missing section: $section"
+                exit 1
+              }
+            done
+          done

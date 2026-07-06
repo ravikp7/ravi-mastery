@@ -1,0 +1,58 @@
+name: Update streak badge
+
+on:
+  push:
+    paths:
+      - 'day-updates/**'
+  schedule:
+    - cron: '0 5 * * *'   # daily at 05:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute streak
+        id: streak
+        run: |
+          python3 <<'PY' >> $GITHUB_OUTPUT
+          from datetime import date, timedelta
+          import os, glob
+          files = sorted(os.path.basename(p).removesuffix('.md')
+                         for p in glob.glob('day-updates/2*.md'))
+          today = date.today()
+          streak = 0
+          d = today
+          while True:
+              if d.weekday() < 5:                # only count workdays
+                  if d.isoformat() in files:
+                      streak += 1
+                  else:
+                      break
+              d -= timedelta(days=1)
+          total = len(files)
+          print(f"streak={streak}")
+          print(f"total={total}")
+          PY
+
+      - name: Update README badges
+        run: |
+          STREAK="${{ steps.streak.outputs.streak }}"
+          TOTAL="${{ steps.streak.outputs.total }}"
+          sed -i "s|badge/streak-[^)]*|badge/streak-${STREAK}%20workdays-blue|" README.md
+          sed -i "s|badge/day-[^)]*|badge/day-${TOTAL}-green|" README.md
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet README.md; then
+            git add README.md
+            git commit -m "chore: update streak badge"
+            git push
+          fi

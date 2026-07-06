@@ -1,0 +1,19 @@
+# Obsidian
+.obsidian/workspace*
+.obsidian/cache
+.obsidian/plugins/*/data.json
+
+# Private notes (never push)
+notes/private/**
+!notes/private/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
+
+# Node (for optional scripts)
+node_modules/
