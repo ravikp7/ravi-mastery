@@ -10,7 +10,7 @@ Public log of a 9-month deep-learning plan across three tracks: ML/AI internals,
 **Projects:** [projects/](./projects/)
 
 ![Streak](https://img.shields.io/badge/streak-0%20workdays-blue)
-![Days elapsed](https://img.shields.io/badge/day-0-green)
+![Days elapsed](https://img.shields.io/badge/day-1-green)
 
 ## How this repo works
 
